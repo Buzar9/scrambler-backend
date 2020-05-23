@@ -9,5 +9,4 @@ public class ScramblerBackendApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ScramblerBackendApplication.class, args);
 	}
-
 }
