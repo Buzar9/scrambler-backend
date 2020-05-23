@@ -10,6 +10,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// todo nie rozpoznaje uniwersalnego formatu wprowadzania morsa
+// todo nie wprowadza spacji z łacińskiego na morsa
+
+
 @Component
 public class MorsService  {
 
@@ -47,12 +51,11 @@ public class MorsService  {
                 }
             }
 
-
             for (String letter : outMessage) {
                 result += letter + "/ ";
             }
         } else {
-            String[] splittedPassword = inMessage.split("/" );
+            String[] splittedPassword = inMessage.split("/");
             String[] splittedLetter = new String[splittedPassword.length];
             String trimLetter;
 
@@ -60,7 +63,6 @@ public class MorsService  {
                 trimLetter = splittedPassword[q].trim();
                 splittedLetter[q] = trimLetter;
             }
-
 
             for (int o = 0; o < splittedPassword.length; o++) {
                 for (int p = 0; p < mappedMors.size(); p++) {
