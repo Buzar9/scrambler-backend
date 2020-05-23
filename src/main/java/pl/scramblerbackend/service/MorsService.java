@@ -1,6 +1,7 @@
 package pl.scramblerbackend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import pl.scramblerbackend.dao.MorsDao;
 
 import java.io.FileNotFoundException;
@@ -9,10 +10,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Component
 public class MorsService  {
 
     @Autowired
-    MorsDao morsDao;
+    private MorsDao morsDao;
 
     public String encrypt(String inMessage) throws FileNotFoundException {
 
@@ -25,25 +27,44 @@ public class MorsService  {
         String result = new String();
         int firstLetter = inMessage.charAt(0);
 
+        String message = inMessage.toLowerCase();
 
         if (firstLetter >= 65) {
-            for (int j = 0; j < inMessage.length(); j++)
-                mappedPassword.put(j, inMessage.charAt(j));
+//            for (int j = 0; j < inMessage.length(); j++) {
+//                mappedPassword.put(j, inMessage.charAt(j));
+//            }
+
+            for (int j =0; j < message.length(); j++) {
+                mappedPassword.put(j, message.charAt(j));
+            }
 
             for (int t = 0; t < mappedPassword.size(); t++) {
                 for (int r = 0; r < mappedAlphabet.size(); r++) {
-                    if (mappedPassword.get(t) == mappedAlphabet.get(r)) outMessage.add(mappedMors.get(r));
+                    if (mappedPassword.get(t) == mappedAlphabet.get(r)) {
+                        outMessage.add(mappedMors.get(r));
+                        break;
+                    }
                 }
             }
+
 
             for (String letter : outMessage) {
                 result += letter + "/ ";
             }
         } else {
-            String[] splitedPassword = inMessage.split("/");
-            for (int o = 0; o < splitedPassword.length; o++) {
+            String[] splittedPassword = inMessage.split("/" );
+            String[] splittedLetter = new String[splittedPassword.length];
+            String trimLetter;
+
+            for (int q = 0; q < splittedPassword.length; q++) {
+                trimLetter = splittedPassword[q].trim();
+                splittedLetter[q] = trimLetter;
+            }
+
+
+            for (int o = 0; o < splittedPassword.length; o++) {
                 for (int p = 0; p < mappedMors.size(); p++) {
-                    int a = splitedPassword[o].compareTo(mappedMors.get(p));
+                    int a = splittedPassword[o].compareTo(mappedMors.get(p));
                     if (a == 0) {
                         outMessage.add(mappedAlphabet.get(p).toString());
                         break;
