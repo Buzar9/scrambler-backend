@@ -2,6 +2,7 @@ package pl.scramblerbackend.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import pl.scramblerbackend.entity.Sylabic;
 import pl.scramblerbackend.service.SylabicService;
 
 @RestController
@@ -13,9 +14,8 @@ public class SylabicController {
     private SylabicService sylabicService;
 
     @PostMapping
-    public String encrypt(@RequestBody String key,
-                          @RequestBody String inMessage) {
+    public String encrypt(@RequestBody Sylabic Message) {
 
-        return sylabicService.encrypt(key, inMessage);
+        return sylabicService.encrypt(Message);
     }
 }

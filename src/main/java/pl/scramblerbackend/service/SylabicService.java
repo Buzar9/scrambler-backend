@@ -1,6 +1,7 @@
 package pl.scramblerbackend.service;
 
 import org.springframework.stereotype.Component;
+import pl.scramblerbackend.entity.Sylabic;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,11 +12,10 @@ import java.util.Map;
 @Component
 public class SylabicService {
 
-    public String encrypt(
-//            String key,
-            String inMessage) {
+    public String encrypt(Sylabic keyNMessage) {
 
-        String key = "gaderypoluki";
+        String message = keyNMessage.getMessage();
+        String key = keyNMessage.getKey();
 
         ArrayList<Character> outMessage = new ArrayList<>();
         ArrayList <Character> standardizedKey = new ArrayList();
@@ -55,11 +55,11 @@ public class SylabicService {
             if (finalKey.size() != readyKey.size()) continue;
         }
 
-        String roughingPassword = inMessage.toLowerCase();
+        String roughingPassword = message.toLowerCase();
         for (int l = 0; l < roughingPassword.length(); l++) {
             char temporary = roughingPassword.charAt(l);
             mappedMessage.put(l, temporary);
-            if (mappedMessage.size() != inMessage.length()) continue;
+            if (mappedMessage.size() != message.length()) continue;
         }
 
         for (int t = 0; t < mappedMessage.size(); t++) {
