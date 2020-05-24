@@ -26,7 +26,14 @@ public class PangramService {
             char temporary = roughingKey.charAt(i);
             if (temporary != ' ' &&
                 temporary != ',' &&
-                temporary != '.') {
+                temporary != '.' &&
+                temporary != '!' &&
+                temporary != '?' &&
+                temporary != '-' &&
+                temporary != '–' &&
+                temporary != '"' &&
+                temporary != '…' &&
+                temporary != ':') {
 
                 standardizedKey.add(temporary);
             }
@@ -37,8 +44,6 @@ public class PangramService {
         for(Character letter : standardizedKey) {
             readyKey += letter.toString();
         }
-
-        System.out.println(readyKey);
 
         for (int a = 0; a < readyKey.length(); a++) {
             char tempChar = readyKey.charAt(a);
