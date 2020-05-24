@@ -1,9 +1,12 @@
 package pl.scramblerbackend.service;
 
+import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+@Component
 public class SylabicService {
 
     public String encrypt(String key, String inMessage) {
