@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-// todo przygotuj i przytnij key ze spacji
-
 @Component
 public class PangramService {
 
@@ -17,13 +15,33 @@ public class PangramService {
         String key = keyNMessage.getKey();
         String message = keyNMessage.getMessage();
 
+        ArrayList <Character> standardizedKey = new ArrayList();
         Map<Integer, String> keyPattern = new HashMap<>();
         Map<Integer, Integer> mappedNumbers = new HashMap<>();
         Map<Integer, String> mappedMessage = new HashMap<>();
         ArrayList<String> outMessage = new ArrayList();
 
-        for (int a = 0; a < key.length(); a++) {
-            char tempChar = key.charAt(a);
+        String roughingKey = key.toLowerCase().trim();
+        for (int i = 0; i < key.length(); i++) {
+            char temporary = roughingKey.charAt(i);
+            if (temporary != ' ' &&
+                temporary != ',' &&
+                temporary != '.') {
+
+                standardizedKey.add(temporary);
+            }
+            if (standardizedKey.size() == roughingKey.length()) continue;
+        }
+
+        String readyKey = new String();
+        for(Character letter : standardizedKey) {
+            readyKey += letter.toString();
+        }
+
+        System.out.println(readyKey);
+
+        for (int a = 0; a < readyKey.length(); a++) {
+            char tempChar = readyKey.charAt(a);
             String tempString = Character.toString(tempChar);
             keyPattern.put(a, tempString);
         }
@@ -54,7 +72,6 @@ public class PangramService {
             }}
 
         String result = new String();
-
         for (String letter : outMessage) {
             result += letter + " ";
         }
