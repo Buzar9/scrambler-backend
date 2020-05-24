@@ -6,10 +6,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+// todo coś nie dizała 
+
 @Component
 public class SylabicService {
 
-    public String encrypt(String key, String inMessage) {
+    public String encrypt(
+//            String key,
+            String inMessage) {
+
+        String key = "gaderypoluki";
 
         ArrayList<Character> outMessage = new ArrayList<>();
         ArrayList <Character> standardizedKey = new ArrayList();
@@ -17,7 +23,7 @@ public class SylabicService {
         Map<Integer, Character> finalKey = new HashMap<>();
         Map<Integer, Character> mappedMessage = new HashMap<>();
 
-        outMessage.clear();
+//        outMessage.clear();
 
         String roughingKey = key.toLowerCase().trim();
         for (int i = 0; i < key.length(); i++) {
@@ -37,9 +43,9 @@ public class SylabicService {
         }
 
         standardizedKey. clear();
-//        outMessage.clear();
+        outMessage.clear();
 
-        for (int j = 0; j < readyKey.size() -1; j++) {
+        for (int j = 0; j < readyKey.size(); j++) {
             int k = j % 2;
             if (k == 0) {
                 finalKey.put(j, readyKey.get(j + 1));
