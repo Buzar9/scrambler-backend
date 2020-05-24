@@ -22,8 +22,6 @@ public class PangramService {
         Map<Integer, String> mappedMessage = new HashMap<>();
         ArrayList<String> outMessage = new ArrayList();
 
-        
-
         for (int a = 0; a < key.length(); a++) {
             char tempChar = key.charAt(a);
             String tempString = Character.toString(tempChar);

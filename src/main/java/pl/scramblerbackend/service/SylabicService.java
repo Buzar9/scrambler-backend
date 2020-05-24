@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-// todo coś nie dizała 
-
 @Component
 public class SylabicService {
 
@@ -22,8 +20,6 @@ public class SylabicService {
         Map<Integer, Character> readyKey = new HashMap<>();
         Map<Integer, Character> finalKey = new HashMap<>();
         Map<Integer, Character> mappedMessage = new HashMap<>();
-
-//        outMessage.clear();
 
         String roughingKey = key.toLowerCase().trim();
         for (int i = 0; i < key.length(); i++) {
