@@ -14,8 +14,8 @@ public class SylabicController {
     private SylabicService sylabicService;
 
     @PostMapping
-    public String encrypt(@RequestBody Sylabic Message) {
+    public String encrypt(@RequestBody Sylabic keyNMessage) {
 
-        return sylabicService.encrypt(Message);
+        return sylabicService.encrypt(keyNMessage);
     }
 }
