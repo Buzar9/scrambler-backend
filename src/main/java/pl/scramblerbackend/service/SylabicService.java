@@ -1,46 +1,45 @@
 package pl.scramblerbackend.service;
 
-import org.springframework.stereotype.Component;
-import pl.scramblerbackend.entity.Sylabic;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import pl.scramblerbackend.dao.SylabicDao;
+import pl.scramblerbackend.entity.KeyNMessage;
+import pl.scramblerbackend.entity.OutPassword;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-@Component
-public class SylabicService {
+@Service
+public class SylabicService implements CipherService {
 
-    public String encrypt(Sylabic keyNMessage) {
+    @Autowired
+    private SylabicDao sylabicDao;
 
-        String message = keyNMessage.getMessage();
+    @Override
+    public OutPassword encrypt(KeyNMessage keyNMessage) throws FileNotFoundException {
+
+//           Standardization of key to the supported format.
         String key = keyNMessage.getKey();
-
-        ArrayList<Character> outMessage = new ArrayList<>();
-        ArrayList <Character> standardizedKey = new ArrayList();
-        Map<Integer, Character> readyKey = new HashMap<>();
-        Map<Integer, Character> finalKey = new HashMap<>();
-        Map<Integer, Character> mappedMessage = new HashMap<>();
-
+        ArrayList<Character> standardizedKey = new ArrayList();
         String roughingKey = key.toLowerCase().trim();
-        for (int i = 0; i < key.length(); i++) {
+        for (int i = 0; i < roughingKey.length(); i++) {
             char temporary = roughingKey.charAt(i);
             if (temporary != ' ') standardizedKey.add(temporary);
-            if (standardizedKey.size() == roughingKey.length()) continue;
         }
 
+        Map<Integer, Character> readyKey = new HashMap<>();
         for (int g = 0; g < standardizedKey.size(); g++) {
             String stringKey = standardizedKey.get(g).toString();
             for (int h = 0; h < standardizedKey.size(); h++) {
-                if (readyKey.size() == standardizedKey.size()) break;
                 char temporary = stringKey.charAt(h);
                 readyKey.put(g, temporary);
-                if (readyKey.size() != standardizedKey.size()) break;
             }
         }
 
-        standardizedKey. clear();
-        outMessage.clear();
-
+        Map<Integer, Character> finalKey = new HashMap<>();
         for (int j = 0; j < readyKey.size(); j++) {
             int k = j % 2;
             if (k == 0) {
@@ -48,16 +47,19 @@ public class SylabicService {
             } else {
                 finalKey.put(j, readyKey.get(j - 1));
             }
-            if (finalKey.size() != readyKey.size()) continue;
         }
 
+//           Standardization of messages to the supported format.
+        String message = keyNMessage.getMessage();
+        Map<Integer, Character> mappedMessage = new HashMap<>();
         String roughingPassword = message.toLowerCase();
         for (int l = 0; l < roughingPassword.length(); l++) {
             char temporary = roughingPassword.charAt(l);
             mappedMessage.put(l, temporary);
-            if (mappedMessage.size() != message.length()) continue;
         }
 
+//        Encryption
+        ArrayList<Character> outMessage = new ArrayList<>();
         for (int t = 0; t < mappedMessage.size(); t++) {
             if (readyKey.containsValue(mappedMessage.get(t))) {
                 for (int r = 0; r < readyKey.size(); r++) {
@@ -66,22 +68,30 @@ public class SylabicService {
                         break;
                     }
                 }
-                if (outMessage.size() == mappedMessage.size()) break;
-
             } else {
                 outMessage.add(mappedMessage.get(t));
             }
         }
 
-        readyKey.clear();
-        finalKey.clear();
-        mappedMessage.clear();
-
+//            Prepare result format.
         String result = new String();
         for (Character letter : outMessage) {
             result += letter;
         }
 
-        return result;
+//        Validation
+        List<Character> vowel = sylabicDao.vowelReader();
+        if (standardizedKey.size() % 2 == 1) {
+            result = "To nie jest szyfr sylabiczny";
+        } else {
+            for (int p = 0; p < vowel.size(); p++) {
+                if (!standardizedKey.contains(vowel.get(p))) {
+                    result += " - Brakuje samogłosek. Ten szyfr może być lepszy";
+                    break;
+                }
+            }
+        }
+
+        return new OutPassword(result);
     }
 }
