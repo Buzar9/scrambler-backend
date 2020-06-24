@@ -11,17 +11,17 @@ import java.util.Scanner;
 @Component
 public class MorsDao {
 
-    public Map<Integer, Character> alphabetReader() throws FileNotFoundException {
-        Scanner scanner = new Scanner(new File("/Users/marek/Documents/GitHub/scrambler-backend/src/main/resources/static/Alphabet.txt"));
-        Map<Integer, Character> mappedAlphabet = new HashMap<>();
+    public Map<Integer, Character> latinReader() throws FileNotFoundException {
+        Scanner scanner = new Scanner(new File("/Users/marek/Documents/GitHub/scrambler-backend/src/main/resources/static/LatinAlphabet.txt"));
+        Map<Integer, Character> mappedLatin = new HashMap<>();
         int counter = 0;
 
         while (scanner.hasNextLine()) {
-            mappedAlphabet.put(counter, scanner.nextLine().charAt(0));
+            mappedLatin.put(counter, scanner.nextLine().charAt(0));
             counter++;
         }
 
-        return mappedAlphabet;
+        return mappedLatin;
     }
 
     public Map<Integer, String> morsReader() throws FileNotFoundException {
