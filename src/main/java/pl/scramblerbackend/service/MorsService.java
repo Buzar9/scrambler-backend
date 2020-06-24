@@ -1,8 +1,10 @@
 package pl.scramblerbackend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import pl.scramblerbackend.dao.MorsDao;
+import pl.scramblerbackend.entity.MorsMessage;
+import pl.scramblerbackend.entity.OutPassword;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -10,78 +12,98 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// todo nie rozpoznaje uniwersalnego formatu wprowadzania morsa
-// todo nie wprowadza spacji z łacińskiego na morsa
-
-
-@Component
-public class MorsService  {
+@Service
+public class MorsService {
 
     @Autowired
     private MorsDao morsDao;
 
-    public String encrypt(String inMessage) throws FileNotFoundException {
+    public OutPassword encrypt(MorsMessage morsMessage) throws FileNotFoundException {
 
-        Map<Integer, Character> mappedAlphabet = morsDao.alphabetReader();
+        Map<Integer, Character> mappedAlphabet = morsDao.latinReader();
         Map<Integer, String> mappedMors = morsDao.morsReader();
-
-        Map<Integer, Character> mappedPassword = new HashMap<>();
-        List<String> outMessage = new ArrayList<>();
-
+        List<String> listedPassword = new ArrayList<>();
         String result = new String();
-        int firstLetter = inMessage.charAt(0);
 
-        String message = inMessage.toLowerCase();
-
+//        Choosing of encryption method.
+        String roughMessage = morsMessage.getMessage();
+        int firstLetter = roughMessage.charAt(0);
         if (firstLetter >= 65) {
-//            for (int j = 0; j < inMessage.length(); j++) {
-//                mappedPassword.put(j, inMessage.charAt(j));
-//            }
 
-            for (int j =0; j < message.length(); j++) {
-                mappedPassword.put(j, message.charAt(j));
+//           Standardization of messages to the supported format.
+            Map<Integer, Character> mappedLetter = new HashMap<>();
+            String standardizedMessage = roughMessage.toLowerCase();
+            for (int j = 0; j < standardizedMessage.length(); j++) {
+                mappedLetter.put(j, standardizedMessage.charAt(j));
             }
 
-            for (int t = 0; t < mappedPassword.size(); t++) {
+//            Encryption latin to mors.
+            for (int t = 0; t < mappedLetter.size(); t++) {
                 for (int r = 0; r < mappedAlphabet.size(); r++) {
-                    if (mappedPassword.get(t) == mappedAlphabet.get(r)) {
-                        outMessage.add(mappedMors.get(r));
+                    if (mappedLetter.get(t) == mappedAlphabet.get(r)) {
+                        listedPassword.add(mappedMors.get(r));
+                        break;
+                    }
+                    if (mappedLetter.get(t) == 32){
+                        listedPassword.add("");
                         break;
                     }
                 }
             }
 
-            for (String letter : outMessage) {
-                result += letter + "/ ";
+//            Prepare result format.
+            result = "///";
+            for (String letter : listedPassword) {
+                result += letter + "/";
             }
+            result += "//";
+
+//            Validation.
+            for (int y = 0; y < mappedLetter.size(); y++) {
+                if (!mappedAlphabet.containsValue(mappedLetter.get(y)) && mappedLetter.get(y) != 32) {
+                    result = "Niepoprawny znak";
+                }
+            }
+
         } else {
-            String[] splittedPassword = inMessage.split("/");
-            String[] splittedLetter = new String[splittedPassword.length];
-            String trimLetter;
 
-            for (int q = 0; q < splittedPassword.length; q++) {
-                trimLetter = splittedPassword[q].trim();
-                splittedLetter[q] = trimLetter;
+//            Standardization of messages to the supported format.
+            String substringMessage = roughMessage
+                    .substring(3, roughMessage.length()-3)
+                    .replace("//","/|/");
+            String[] splittedMessage = substringMessage.split("/");
+            Map<Integer, String> mappedSign = new HashMap<>();
+
+            for (int q = 0; q < splittedMessage.length; q++) {
+                String trimMessage = splittedMessage[q].trim();
+                mappedSign.put(q, trimMessage);
             }
 
-            for (int o = 0; o < splittedPassword.length; o++) {
+//            Encryption mors to latin.
+            for (int o = 0; o < mappedSign.size(); o++) {
                 for (int p = 0; p < mappedMors.size(); p++) {
-                    int a = splittedPassword[o].compareTo(mappedMors.get(p));
-                    if (a == 0) {
-                        outMessage.add(mappedAlphabet.get(p).toString());
+                    if (mappedSign.get(o).equals(mappedMors.get(p)) & !mappedSign.get(o).equals("|")) {
+                        listedPassword.add(mappedAlphabet.get(p).toString());
                         break;
+                    } else if (mappedSign.get(o).equals("|")) {
+                        listedPassword.add(" ");
                     }
                 }
             }
 
-            for (String letter : outMessage) {
+//            Prepare result format.
+            for (String letter : listedPassword) {
                 result += letter;
+            }
+
+//            Validation.
+            for (int i = 0; i < mappedSign.size(); i++) {
+                if (!mappedMors.containsValue(mappedSign.get(i)) & !mappedSign.get(i).equals("|")) {
+                    result = "Niepoprawny znak";
+                }
             }
         }
 
-        mappedPassword.clear();
-        outMessage.clear();
-
-        return result;
+        return new OutPassword(result);
     }
 }
