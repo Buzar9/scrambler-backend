@@ -24,19 +24,15 @@ public class SylabicService implements CipherService {
 //           Standardization of key to the supported format.
         String key = keyNMessage.getKey();
         ArrayList<Character> standardizedKey = new ArrayList();
+        Map<Integer, Character> readyKey = new HashMap<>();
         String roughingKey = key.toLowerCase().trim();
         for (int i = 0; i < roughingKey.length(); i++) {
             char temporary = roughingKey.charAt(i);
             if (temporary != ' ') standardizedKey.add(temporary);
         }
-
-        Map<Integer, Character> readyKey = new HashMap<>();
         for (int g = 0; g < standardizedKey.size(); g++) {
-            String stringKey = standardizedKey.get(g).toString();
-            for (int h = 0; h < standardizedKey.size(); h++) {
-                char temporary = stringKey.charAt(h);
-                readyKey.put(g, temporary);
-            }
+            char temporary = standardizedKey.get(g);
+            readyKey.put(g, temporary);
         }
 
         Map<Integer, Character> finalKey = new HashMap<>();
@@ -81,11 +77,11 @@ public class SylabicService implements CipherService {
 
 //        Validation
         List<Character> vowel = sylabicDao.vowelReader();
-        if (standardizedKey.size() % 2 == 1) {
+        if (readyKey.size() % 2 == 1) {
             result = "To nie jest szyfr sylabiczny";
         } else {
             for (int p = 0; p < vowel.size(); p++) {
-                if (!standardizedKey.contains(vowel.get(p))) {
+                if (!readyKey.containsValue(vowel.get(p))) {
                     result += " - Brakuje samogłosek. Ten szyfr może być lepszy";
                     break;
                 }
