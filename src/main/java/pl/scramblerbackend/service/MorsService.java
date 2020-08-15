@@ -3,7 +3,7 @@ package pl.scramblerbackend.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.scramblerbackend.dao.MorsDao;
-import pl.scramblerbackend.entity.MorsMessage;
+import pl.scramblerbackend.entity.KeyNMessage;
 import pl.scramblerbackend.entity.OutPassword;
 
 import java.io.FileNotFoundException;
@@ -18,7 +18,7 @@ public class MorsService {
     @Autowired
     private MorsDao morsDao;
 
-    public OutPassword encrypt(MorsMessage morsMessage) throws FileNotFoundException {
+    public OutPassword encrypt(KeyNMessage morsMessage) throws FileNotFoundException {
 
         Map<Integer, Character> mappedAlphabet = morsDao.latinReader();
         Map<Integer, String> mappedMors = morsDao.morsReader();
@@ -27,6 +27,7 @@ public class MorsService {
 
 //        Choosing method of encryption.
         String roughMessage = morsMessage.getMessage();
+
         int firstLetter = roughMessage.charAt(0);
         if (firstLetter >= 65) {
 
