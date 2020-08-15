@@ -26,7 +26,7 @@ public class MorsService {
         String result = new String();
 
 //        Choosing method of encryption.
-        String roughMessage = morsMessage.getMessage();
+        String roughMessage = morsMessage.getMessage().toLowerCase();
 
         int firstLetter = roughMessage.charAt(0);
         if (firstLetter >= 65) {
