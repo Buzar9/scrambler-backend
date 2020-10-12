@@ -21,18 +21,16 @@ public class MorsService {
     public OutPassword encrypt(KeyNMessage keyNMessage) throws FileNotFoundException {
 
         String roughMessage = keyNMessage.getMessage().toLowerCase();
-        Map<Integer, Character> mappedAlphabet = morsDao.latinReader();
-        Map<Integer, String> mappedMors = morsDao.morsReader();
         String password;
 
 
         if (isMessageInLatin(roughMessage)) {
             Map<Integer, Character> lettersFromMessage = mappingLettersFromMessage(roughMessage);
-            password = encryptionLatinToMors(lettersFromMessage, mappedMors, mappedAlphabet);
+            password = encryptionLatinToMors(lettersFromMessage);
 
         } else {
             Map<Integer, String> mappedSign = mappingSignFromMessage(roughMessage);
-            password = encryptionMorsToLatin(mappedSign, mappedMors, mappedAlphabet);
+            password = encryptionMorsToLatin(mappedSign);
 
         }
 
@@ -53,22 +51,20 @@ public class MorsService {
         return mappedLetters;
     }
 
-    private String encryptionLatinToMors(Map<Integer, Character> lettersFromMessage,
-                                         Map<Integer, String> mappedMors,
-                                         Map<Integer, Character> mappedAlphabet) {
-        List<String> roughPassword = latinEncryptionToRoughMorsPassword(lettersFromMessage, mappedMors, mappedAlphabet);
+    private String encryptionLatinToMors(Map<Integer, Character> lettersFromMessage) throws FileNotFoundException {
+        List<String> roughPassword = latinEncryptionToRoughMorsPassword(lettersFromMessage);
         String readyPassword = adaptPasswordToConvention(roughPassword);
 
-        if (morsPasswordValidation(lettersFromMessage, mappedAlphabet)) {
+        if (morsPasswordValidation(lettersFromMessage)) {
             return readyPassword;
         }
         return "Niepoprawny znak";
     }
 
-    private List<String> latinEncryptionToRoughMorsPassword(Map<Integer, Character> lettersFromMessage,
-                                                        Map<Integer, String> mappedMors,
-                                                        Map<Integer, Character> mappedAlphabet) {
+    private List<String> latinEncryptionToRoughMorsPassword(Map<Integer, Character> lettersFromMessage) throws FileNotFoundException {
         List<String> roughPassword = new ArrayList<>();
+        Map<Integer, Character> mappedAlphabet = morsDao.latinReader();
+        Map<Integer, String> mappedMors = morsDao.morsReader();
 
         for (int t = 0; t < lettersFromMessage.size(); t++) {
             for (int r = 0; r < mappedAlphabet.size(); r++) {
@@ -94,8 +90,8 @@ public class MorsService {
     }
 
 
-    private boolean morsPasswordValidation(Map<Integer, Character> lettersFromMessage,
-                                           Map<Integer, Character> mappedAlphabet) {
+    private boolean morsPasswordValidation(Map<Integer, Character> lettersFromMessage) throws FileNotFoundException {
+        Map<Integer, Character> mappedAlphabet = morsDao.latinReader();
         for (int y = 0; y < lettersFromMessage.size(); y++) {
             if (!mappedAlphabet.containsValue(lettersFromMessage.get(y)) && lettersFromMessage.get(y) != 32) {
                 return false;
@@ -124,11 +120,11 @@ public class MorsService {
         return substringMessage;
     }
 
-    private String encryptionMorsToLatin(Map<Integer, String> mappedSign,
-                                         Map<Integer, String> mappedMors,
-                                         Map<Integer, Character> mappedAlphabet) {
+    private String encryptionMorsToLatin(Map<Integer, String> mappedSign) throws FileNotFoundException {
 
-        List<String> roughPassword = morsEncryptionToRoughLatinPassword(mappedSign, mappedMors, mappedAlphabet);
+        List<String> roughPassword;
+        Map<Integer, String> mappedMors = morsDao.morsReader();
+        roughPassword = morsEncryptionToRoughLatinPassword(mappedSign);
         String readyPassword = createSentenceFromLetters(roughPassword);
 
         if (latinPasswordValidation(mappedSign, mappedMors)) {
@@ -139,10 +135,9 @@ public class MorsService {
 
     }
 
-    private List<String> morsEncryptionToRoughLatinPassword(Map<Integer, String> mappedSign,
-                                                            Map<Integer, String> mappedMors,
-                                                            Map<Integer, Character> mappedAlphabet) {
-
+    private List<String> morsEncryptionToRoughLatinPassword(Map<Integer, String> mappedSign) throws FileNotFoundException {
+        Map<Integer, Character> mappedAlphabet = morsDao.latinReader();
+        Map<Integer, String> mappedMors = morsDao.morsReader();
         List<String> roughPassword = new ArrayList<>();
 
         for (int o = 0; o < mappedSign.size(); o++) {
