@@ -20,16 +20,15 @@ public class MorsService {
 
     public OutPassword encrypt(KeyNMessage keyNMessage) throws FileNotFoundException {
 
-        String roughMessage = keyNMessage.getMessage().toLowerCase();
+        String message = keyNMessage.getMessage().toLowerCase();
         String password;
-
-
-        if (isMessageInLatin(roughMessage)) {
-            Map<Integer, Character> lettersFromMessage = mappingLettersFromMessage(roughMessage);
+        
+        if (isMessageInLatin(message)) {
+            Map<Integer, Character> lettersFromMessage = mappingLettersFromMessage(message);
             password = encryptionLatinToMors(lettersFromMessage);
 
         } else {
-            Map<Integer, String> mappedSign = mappingSignFromMessage(roughMessage);
+            Map<Integer, String> mappedSign = mappingSignFromMessage(message);
             password = encryptionMorsToLatin(mappedSign);
 
         }
