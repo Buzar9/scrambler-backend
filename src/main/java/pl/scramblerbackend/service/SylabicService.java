@@ -21,44 +21,19 @@ public class SylabicService implements CipherService {
     @Override
     public OutPassword encrypt(KeyNMessage keyNMessage) throws FileNotFoundException {
 
-        Map<Integer, Character> readyKey = new HashMap<>();
-        String key = keyNMessage.getKey().trim().toLowerCase();
-        int letterPosition = 0;
-        for (int i = 0; i < key.length(); i++) {
-            char letterFromKey = key.charAt(i);
-            if (letterFromKey != ' ')  {
-                readyKey.put(letterPosition, letterFromKey);
-                letterPosition++;
-            }
-        }
 
+        Map<Integer, Character> standardizedKey = keyStandardization(keyNMessage);
+        Map<Integer, Character> keyReadyToEncrypt = prepareKeyToEncrypt(standardizedKey);
+        Map<Integer, Character> mappedMessage = messageStandardization(keyNMessage);
 
-        Map<Integer, Character> finalKey = new HashMap<>();
-        for (int j = 0; j < readyKey.size(); j++) {
-            int k = j % 2;
-            if (k == 0) {
-                finalKey.put(j, readyKey.get(j + 1));
-            } else {
-                finalKey.put(j, readyKey.get(j - 1));
-            }
-        }
-
-//           Standardization of messages to the supported format.
-        String message = keyNMessage.getMessage();
-        Map<Integer, Character> mappedMessage = new HashMap<>();
-        String roughingPassword = message.toLowerCase();
-        for (int l = 0; l < roughingPassword.length(); l++) {
-            char temporary = roughingPassword.charAt(l);
-            mappedMessage.put(l, temporary);
-        }
 
 //        Encryption
         ArrayList<Character> outMessage = new ArrayList<>();
         for (int t = 0; t < mappedMessage.size(); t++) {
-            if (readyKey.containsValue(mappedMessage.get(t))) {
-                for (int r = 0; r < readyKey.size(); r++) {
-                    if (mappedMessage.get(t) == readyKey.get(r)) {
-                        outMessage.add(finalKey.get(r));
+            if (standardizedKey.containsValue(mappedMessage.get(t))) {
+                for (int r = 0; r < standardizedKey.size(); r++) {
+                    if (mappedMessage.get(t) == standardizedKey.get(r)) {
+                        outMessage.add(keyReadyToEncrypt.get(r));
                         break;
                     }
                 }
@@ -75,11 +50,11 @@ public class SylabicService implements CipherService {
 
 //        Validation
         List<Character> vowel = sylabicDao.vowelReader();
-        if (readyKey.size() % 2 == 1) {
+        if (standardizedKey.size() % 2 == 1) {
             result = "To nie jest szyfr sylabiczny";
         } else {
             for (int p = 0; p < vowel.size(); p++) {
-                if (!readyKey.containsValue(vowel.get(p))) {
+                if (!standardizedKey.containsValue(vowel.get(p))) {
                     result += " - Brakuje samogłosek. Ten szyfr może być lepszy";
                     break;
                 }
@@ -88,4 +63,52 @@ public class SylabicService implements CipherService {
 
         return new OutPassword(result);
     }
+
+    private Map<Integer, Character> keyStandardization(KeyNMessage keyNMessage) {
+        Map<Integer, Character> standardizedKey = new HashMap<>();
+        String key = keyNMessage.getKey().trim().toLowerCase();
+        int letterPosition = 0;
+        for (int i = 0; i < key.length(); i++) {
+            char letterFromKey = key.charAt(i);
+            if (letterFromKey != ' ')  {
+                standardizedKey.put(letterPosition, letterFromKey);
+                letterPosition++;
+            }
+        }
+        return standardizedKey;
+    }
+
+    private Map<Integer, Character> prepareKeyToEncrypt(Map<Integer, Character> standardizedKey) {
+        Map<Integer, Character> keyReadyToEncrypt = new HashMap<>();
+        for (int letterPosition = 0; letterPosition < standardizedKey.size(); letterPosition++) {
+            if (isFirstInPair(letterPosition)) {
+                keyReadyToEncrypt.put(letterPosition, standardizedKey.get(letterPosition + 1));
+            } else {
+                keyReadyToEncrypt.put(letterPosition, standardizedKey.get(letterPosition - 1));
+            }
+        }
+
+        return keyReadyToEncrypt;
+    }
+
+    private boolean isFirstInPair(int letterPosition) {
+        boolean isFirst;
+        if(letterPosition % 2 == 0) {
+            isFirst = true;
+        } else {
+            isFirst = false;
+        }
+        return isFirst;
+    }
+
+    private Map<Integer, Character> messageStandardization(KeyNMessage keyNMessage) {
+        Map<Integer, Character> mappedMessage = new HashMap<>();
+        String message = keyNMessage.getMessage().toLowerCase();
+        for (int letterPosition = 0; letterPosition < message.length(); letterPosition++) {
+            char letter = message.charAt(letterPosition);
+            mappedMessage.put(letterPosition, letter);
+        }
+        return mappedMessage;
+    }
+
 }
