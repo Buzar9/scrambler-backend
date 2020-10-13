@@ -53,7 +53,7 @@ public class MorsService {
         List<String> roughPassword = latinEncryptionToRoughMorsPassword(lettersFromMessage);
         String readyPassword = adaptPasswordToConvention(roughPassword);
 
-        if (morsPasswordValidation(lettersFromMessage)) {
+        if (isMorsPasswordValid(lettersFromMessage)) {
             return readyPassword;
         }
         return "Niepoprawny znak";
@@ -88,7 +88,7 @@ public class MorsService {
     }
 
 
-    private boolean morsPasswordValidation(Map<Integer, Character> lettersFromMessage) throws FileNotFoundException {
+    private boolean isMorsPasswordValid(Map<Integer, Character> lettersFromMessage) throws FileNotFoundException {
         Map<Integer, Character> mappedAlphabet = morsDao.latinReader();
         for (int y = 0; y < lettersFromMessage.size(); y++) {
             if (!mappedAlphabet.containsValue(lettersFromMessage.get(y)) && lettersFromMessage.get(y) != 32) {
@@ -125,7 +125,7 @@ public class MorsService {
         roughPassword = morsEncryptionToRoughLatinPassword(mappedSign);
         String readyPassword = createSentenceFromLetters(roughPassword);
 
-        if (latinPasswordValidation(mappedSign, mappedMors)) {
+        if (isLatinPasswordValid(mappedSign, mappedMors)) {
             return readyPassword;
         }
 
@@ -160,14 +160,13 @@ public class MorsService {
         return readyPassword;
     }
 
-    private boolean latinPasswordValidation(Map<Integer, String> mappedSign,
-                                           Map<Integer, String> mappedMors) {
+    private boolean isLatinPasswordValid(Map<Integer, String> mappedSign,
+                                         Map<Integer, String> mappedMors) {
         for (int i = 0; i < mappedSign.size(); i++) {
             if (!mappedMors.containsValue(mappedSign.get(i)) & !mappedSign.get(i).equals("|")) {
                 return false;
             }
         }
         return true;
-
     }
 }
