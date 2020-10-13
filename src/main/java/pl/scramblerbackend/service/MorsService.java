@@ -23,29 +23,28 @@ public class MorsService {
         String message = keyNMessage.getMessage().toLowerCase();
         String password;
         
-        if (isMessageInLatin(message)) {
-            Map<Integer, Character> lettersFromMessage = mappingLettersFromMessage(message);
+        if (isInLatin(message)) {
+            Map<Integer, Character> lettersFromMessage = mappingLettersFrom(message);
             password = encryptionLatinToMors(lettersFromMessage);
 
         } else {
-            Map<Integer, String> mappedSign = mappingSignFromMessage(message);
+            Map<Integer, String> mappedSign = mappingSignFrom(message);
             password = encryptionMorsToLatin(mappedSign);
-
         }
 
         return new OutPassword(password);
     }
 
-    private boolean isMessageInLatin(String roughMessage) {
-        int firstLetter = roughMessage.charAt(0);
+    private boolean isInLatin(String message) {
+        int firstLetter = message.charAt(0);
         boolean isLatin = firstLetter >= 65;
         return isLatin;
     }
 
-    private Map<Integer, Character> mappingLettersFromMessage(String roughMessage) {
+    private Map<Integer, Character> mappingLettersFrom(String message) {
         Map<Integer, Character> mappedLetters = new HashMap<>();
-        for (int i = 0; i < roughMessage.length(); i++) {
-            mappedLetters.put(i, roughMessage.charAt(i));
+        for (int i = 0; i < message.length(); i++) {
+            mappedLetters.put(i, message.charAt(i));
         }
         return mappedLetters;
     }
@@ -99,8 +98,8 @@ public class MorsService {
         return true;
     }
 
-    private Map<Integer, String> mappingSignFromMessage(String roughMessage) {
-        String substringMessage = erasingUnnecessaryContentFromMessage(roughMessage);
+    private Map<Integer, String> mappingSignFrom(String message) {
+        String substringMessage = erasingUnnecessaryContentFrom(message);
 
         String[] splitMessage = substringMessage.split("/");
         Map<Integer, String> mappedSign = new HashMap<>();
@@ -112,9 +111,9 @@ public class MorsService {
         return mappedSign;
     }
 
-    private String erasingUnnecessaryContentFromMessage(String roughMessage) {
-        String substringMessage = roughMessage
-                .substring(3, roughMessage.length() - 3)
+    private String erasingUnnecessaryContentFrom(String message) {
+        String substringMessage = message
+                .substring(3, message.length() - 3)
                 .replace("//", "/|/");
         return substringMessage;
     }
