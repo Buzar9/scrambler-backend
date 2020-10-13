@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Scanner;
 
 @Component
-public class SylabicDao {
+public class SyllabicDao {
 
     public List<Character> vowelReader() throws FileNotFoundException {
         Scanner scanner = new Scanner(new File("/Users/marek/Documents/GitHub/scrambler-backend/src/main/resources/static/Vowel.txt"));

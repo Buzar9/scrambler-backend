@@ -4,21 +4,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pl.scramblerbackend.entity.KeyNMessage;
 import pl.scramblerbackend.entity.OutPassword;
-import pl.scramblerbackend.service.SylabicService;
+import pl.scramblerbackend.service.SyllabicService;
 
 import java.io.FileNotFoundException;
 
 @RestController
 @RequestMapping("/sylabic")
 @CrossOrigin(origins = "*")
-public class SylabicController {
+public class SyllabicController {
 
     @Autowired
-    private SylabicService sylabicService;
+    private SyllabicService syllabicService;
 
     @PostMapping
     public OutPassword encrypt(@RequestBody KeyNMessage keyNMessage) throws FileNotFoundException {
 
-        return sylabicService.encrypt(keyNMessage);
+        return syllabicService.encrypt(keyNMessage);
     }
 }

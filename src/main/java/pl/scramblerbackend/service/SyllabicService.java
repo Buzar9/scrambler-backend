@@ -2,7 +2,7 @@ package pl.scramblerbackend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pl.scramblerbackend.dao.SylabicDao;
+import pl.scramblerbackend.dao.SyllabicDao;
 import pl.scramblerbackend.entity.KeyNMessage;
 import pl.scramblerbackend.entity.OutPassword;
 
@@ -13,10 +13,10 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class SylabicService implements CipherService {
+public class SyllabicService implements CipherService {
 
     @Autowired
-    private SylabicDao sylabicDao;
+    private SyllabicDao syllabicDao;
 
     @Override
     public OutPassword encrypt(KeyNMessage keyNMessage) throws FileNotFoundException {
@@ -24,7 +24,7 @@ public class SylabicService implements CipherService {
 
 
 //        Validation
-        List<Character> vowel = sylabicDao.vowelReader();
+        List<Character> vowel = syllabicDao.vowelReader();
         if (keyReadyToEncrypt.size() % 2 == 1) {
             result = "To nie jest szyfr sylabiczny";
         } else {
@@ -112,5 +112,16 @@ public class SylabicService implements CipherService {
         }
         return readyPassword;
     }
+
+    private boolean isKeyEven(KeyNMessage keyNMessage) {
+        Map<Integer, Character> keyReadyToEncrypt = prepareKeyToEncrypt(keyNMessage);
+        if(keyReadyToEncrypt.size() % 2 == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    private boolean isKeySyllabic()
 
 }
