@@ -22,39 +22,14 @@ public class SylabicService implements CipherService {
     public OutPassword encrypt(KeyNMessage keyNMessage) throws FileNotFoundException {
 
 
-        Map<Integer, Character> standardizedKey = keyStandardization(keyNMessage);
-        Map<Integer, Character> keyReadyToEncrypt = prepareKeyToEncrypt(standardizedKey);
-        Map<Integer, Character> mappedMessage = messageStandardization(keyNMessage);
-
-
-//        Encryption
-        ArrayList<Character> outMessage = new ArrayList<>();
-        for (int t = 0; t < mappedMessage.size(); t++) {
-            if (standardizedKey.containsValue(mappedMessage.get(t))) {
-                for (int r = 0; r < standardizedKey.size(); r++) {
-                    if (mappedMessage.get(t) == standardizedKey.get(r)) {
-                        outMessage.add(keyReadyToEncrypt.get(r));
-                        break;
-                    }
-                }
-            } else {
-                outMessage.add(mappedMessage.get(t));
-            }
-        }
-
-//            Prepare result format.
-        String result = new String();
-        for (Character letter : outMessage) {
-            result += letter;
-        }
 
 //        Validation
         List<Character> vowel = sylabicDao.vowelReader();
-        if (standardizedKey.size() % 2 == 1) {
+        if (keyReadyToEncrypt.size() % 2 == 1) {
             result = "To nie jest szyfr sylabiczny";
         } else {
             for (int p = 0; p < vowel.size(); p++) {
-                if (!standardizedKey.containsValue(vowel.get(p))) {
+                if (!keyReadyToEncrypt.containsValue(vowel.get(p))) {
                     result += " - Brakuje samogłosek. Ten szyfr może być lepszy";
                     break;
                 }
@@ -70,7 +45,7 @@ public class SylabicService implements CipherService {
         int letterPosition = 0;
         for (int i = 0; i < key.length(); i++) {
             char letterFromKey = key.charAt(i);
-            if (letterFromKey != ' ')  {
+            if (letterFromKey != ' ') {
                 standardizedKey.put(letterPosition, letterFromKey);
                 letterPosition++;
             }
@@ -78,7 +53,8 @@ public class SylabicService implements CipherService {
         return standardizedKey;
     }
 
-    private Map<Integer, Character> prepareKeyToEncrypt(Map<Integer, Character> standardizedKey) {
+    private Map<Integer, Character> prepareKeyToEncrypt(KeyNMessage keyNMessage) {
+        Map<Integer, Character> standardizedKey = keyStandardization(keyNMessage);
         Map<Integer, Character> keyReadyToEncrypt = new HashMap<>();
         for (int letterPosition = 0; letterPosition < standardizedKey.size(); letterPosition++) {
             if (isFirstInPair(letterPosition)) {
@@ -87,13 +63,12 @@ public class SylabicService implements CipherService {
                 keyReadyToEncrypt.put(letterPosition, standardizedKey.get(letterPosition - 1));
             }
         }
-
         return keyReadyToEncrypt;
     }
 
     private boolean isFirstInPair(int letterPosition) {
         boolean isFirst;
-        if(letterPosition % 2 == 0) {
+        if (letterPosition % 2 == 0) {
             isFirst = true;
         } else {
             isFirst = false;
@@ -109,6 +84,33 @@ public class SylabicService implements CipherService {
             mappedMessage.put(letterPosition, letter);
         }
         return mappedMessage;
+    }
+
+    private List<Character> changingLettersByKey(KeyNMessage keyNMessage) {
+        Map<Integer, Character> keyReadyToEncrypt = prepareKeyToEncrypt(keyNMessage);
+        Map<Integer, Character> mappedMessage = messageStandardization(keyNMessage);
+        ArrayList<Character> roughPassword = new ArrayList<>();
+        for (int t = 0; t < mappedMessage.size(); t++) {
+            if (keyReadyToEncrypt.containsValue(mappedMessage.get(t))) {
+                for (int r = 0; r < keyReadyToEncrypt.size(); r++) {
+                    if (mappedMessage.get(t) == keyReadyToEncrypt.get(r)) {
+                        roughPassword.add(keyReadyToEncrypt.get(r));
+                        break;
+                    }
+                }
+            } else {
+                roughPassword.add(mappedMessage.get(t));
+            }
+        }
+        return roughPassword;
+    }
+
+    private String createSentenceFromLetters(List<Character> roughPassword) {
+        String readyPassword = new String();
+        for (char letter : roughPassword) {
+            readyPassword += letter;
+        }
+        return readyPassword;
     }
 
 }
