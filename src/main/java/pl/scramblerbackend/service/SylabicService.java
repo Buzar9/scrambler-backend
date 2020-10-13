@@ -21,19 +21,17 @@ public class SylabicService implements CipherService {
     @Override
     public OutPassword encrypt(KeyNMessage keyNMessage) throws FileNotFoundException {
 
-//           Standardization of key to the supported format.
-        String key = keyNMessage.getKey();
-        ArrayList<Character> standardizedKey = new ArrayList();
         Map<Integer, Character> readyKey = new HashMap<>();
-        String roughingKey = key.toLowerCase().trim();
-        for (int i = 0; i < roughingKey.length(); i++) {
-            char temporary = roughingKey.charAt(i);
-            if (temporary != ' ') standardizedKey.add(temporary);
+        String key = keyNMessage.getKey().trim().toLowerCase();
+        int letterPosition = 0;
+        for (int i = 0; i < key.length(); i++) {
+            char letterFromKey = key.charAt(i);
+            if (letterFromKey != ' ')  {
+                readyKey.put(letterPosition, letterFromKey);
+                letterPosition++;
+            }
         }
-        for (int g = 0; g < standardizedKey.size(); g++) {
-            char temporary = standardizedKey.get(g);
-            readyKey.put(g, temporary);
-        }
+
 
         Map<Integer, Character> finalKey = new HashMap<>();
         for (int j = 0; j < readyKey.size(); j++) {
