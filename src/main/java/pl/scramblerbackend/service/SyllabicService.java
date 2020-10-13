@@ -113,6 +113,14 @@ public class SyllabicService implements CipherService {
         return readyPassword;
     }
 
+    private boolean isKeyValid(KeyNMessage keyNMessage) throws FileNotFoundException {
+        if(isKeyEven(keyNMessage) && isKeyPerfectSyllabic(keyNMessage)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     private boolean isKeyEven(KeyNMessage keyNMessage) {
         Map<Integer, Character> keyReadyToEncrypt = prepareKeyToEncrypt(keyNMessage);
         if (keyReadyToEncrypt.size() % 2 == 0) {
@@ -134,6 +142,4 @@ public class SyllabicService implements CipherService {
         }
         return isPerfect;
     }
-
-
 }
