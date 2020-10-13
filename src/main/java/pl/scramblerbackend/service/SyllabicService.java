@@ -22,7 +22,6 @@ public class SyllabicService implements CipherService {
     public OutPassword encrypt(KeyNMessage keyNMessage) throws FileNotFoundException {
 
 
-
 //        Validation
         List<Character> vowel = syllabicDao.vowelReader();
         if (keyReadyToEncrypt.size() % 2 == 1) {
@@ -115,13 +114,25 @@ public class SyllabicService implements CipherService {
 
     private boolean isKeyEven(KeyNMessage keyNMessage) {
         Map<Integer, Character> keyReadyToEncrypt = prepareKeyToEncrypt(keyNMessage);
-        if(keyReadyToEncrypt.size() % 2 == 0) {
+        if (keyReadyToEncrypt.size() % 2 == 0) {
             return true;
         } else {
             return false;
         }
     }
-    
-    private boolean isKeySyllabic()
+
+    private boolean isKeyPerfectSyllabic(KeyNMessage keyNMessage) throws FileNotFoundException {
+        Map<Integer, Character> keyReadyToEncrypt = prepareKeyToEncrypt(keyNMessage);
+        List<Character> vowels = syllabicDao.vowelReader();
+        boolean isPerfect = true;
+        for (int p = 0; p < vowels.size(); p++) {
+            if (!keyReadyToEncrypt.containsValue(vowels.get(p))) {
+                isPerfect = false;
+                break;
+            }
+        }
+        return isPerfect;
+    }
+
 
 }
