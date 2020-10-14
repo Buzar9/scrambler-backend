@@ -21,19 +21,6 @@ public class SyllabicService implements CipherService {
     @Override
     public OutPassword encrypt(KeyNMessage keyNMessage) throws FileNotFoundException {
 
-
-//        List<Character> vowel = syllabicDao.vowelReader();
-//        if (keyReadyToEncrypt.size() % 2 == 1) {
-//            result = "To nie jest szyfr sylabiczny";
-//        } else {
-//            for (int p = 0; p < vowel.size(); p++) {
-//                if (!keyReadyToEncrypt.containsValue(vowel.get(p))) {
-//                    result += " - Brakuje samogłosek. Ten szyfr może być lepszy";
-//                    break;
-//                }
-//            }
-//        }
-
         return new OutPassword(result);
     }
 
