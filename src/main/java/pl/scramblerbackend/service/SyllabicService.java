@@ -113,12 +113,10 @@ public class SyllabicService implements CipherService {
         return readyPassword;
     }
 
-    private boolean isKeyValid(KeyNMessage keyNMessage) throws FileNotFoundException {
-        if(isKeyEven(keyNMessage) && isKeyPerfectSyllabic(keyNMessage)) {
-            return true;
-        } else {
-            return false;
-        }
+    private String keyValidating(KeyNMessage keyNMessage) throws FileNotFoundException {
+        if(!isKeyEven(keyNMessage)) return "To nie jest szyf sylabiczny";
+        if(!isKeyPerfectSyllabic(keyNMessage)) return "Brakuje samogłosek. Ten szyfr może być lepszy";
+        return null;
     }
 
     private boolean isKeyEven(KeyNMessage keyNMessage) {
