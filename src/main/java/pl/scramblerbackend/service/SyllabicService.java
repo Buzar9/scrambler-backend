@@ -24,6 +24,34 @@ public class SyllabicService implements CipherService {
         return new OutPassword(result);
     }
 
+    private String keyValidating(KeyNMessage keyNMessage) throws FileNotFoundException {
+        if(!isKeyEven(keyNMessage)) return "To nie jest szyf sylabiczny";
+        if(!isKeyPerfectSyllabic(keyNMessage)) return "Brakuje samogłosek. Ten szyfr może być lepszy";
+        return null;
+    }
+
+    private boolean isKeyEven(KeyNMessage keyNMessage) {
+        Map<Integer, Character> keyReadyToEncrypt = prepareKeyToEncrypt(keyNMessage);
+        if (keyReadyToEncrypt.size() % 2 == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean isKeyPerfectSyllabic(KeyNMessage keyNMessage) throws FileNotFoundException {
+        Map<Integer, Character> keyReadyToEncrypt = prepareKeyToEncrypt(keyNMessage);
+        List<Character> vowels = syllabicDao.vowelReader();
+        boolean isPerfect = true;
+        for (int p = 0; p < vowels.size(); p++) {
+            if (!keyReadyToEncrypt.containsValue(vowels.get(p))) {
+                isPerfect = false;
+                break;
+            }
+        }
+        return isPerfect;
+    }
+
     private List<Character> changingLettersByKey(KeyNMessage keyNMessage) {
         Map<Integer, Character> keyReadyToEncrypt = prepareKeyToEncrypt(keyNMessage);
         Map<Integer, Character> mappedMessage = messageStandardization(keyNMessage);
@@ -98,33 +126,5 @@ public class SyllabicService implements CipherService {
             readyPassword += letter;
         }
         return readyPassword;
-    }
-
-    private String keyValidating(KeyNMessage keyNMessage) throws FileNotFoundException {
-        if(!isKeyEven(keyNMessage)) return "To nie jest szyf sylabiczny";
-        if(!isKeyPerfectSyllabic(keyNMessage)) return "Brakuje samogłosek. Ten szyfr może być lepszy";
-        return null;
-    }
-
-    private boolean isKeyEven(KeyNMessage keyNMessage) {
-        Map<Integer, Character> keyReadyToEncrypt = prepareKeyToEncrypt(keyNMessage);
-        if (keyReadyToEncrypt.size() % 2 == 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private boolean isKeyPerfectSyllabic(KeyNMessage keyNMessage) throws FileNotFoundException {
-        Map<Integer, Character> keyReadyToEncrypt = prepareKeyToEncrypt(keyNMessage);
-        List<Character> vowels = syllabicDao.vowelReader();
-        boolean isPerfect = true;
-        for (int p = 0; p < vowels.size(); p++) {
-            if (!keyReadyToEncrypt.containsValue(vowels.get(p))) {
-                isPerfect = false;
-                break;
-            }
-        }
-        return isPerfect;
     }
 }
