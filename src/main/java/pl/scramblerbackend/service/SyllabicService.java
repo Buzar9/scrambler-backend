@@ -20,11 +20,18 @@ public class SyllabicService implements CipherService {
 
     @Override
     public OutPassword encrypt(KeyNMessage keyNMessage) throws FileNotFoundException {
+        String responseToUser;
+        if (whatIsWrongWithKey(keyNMessage) != null) {
+            responseToUser = whatIsWrongWithKey(keyNMessage);
+        } else {
+            List<Character> roughPassword = changingLettersByKey(keyNMessage);
+            responseToUser = createSentenceFromLetters(roughPassword);
+        }
 
-        return new OutPassword(result);
+        return new OutPassword(responseToUser);
     }
 
-    private String keyValidating(KeyNMessage keyNMessage) throws FileNotFoundException {
+    private String whatIsWrongWithKey(KeyNMessage keyNMessage) throws FileNotFoundException {
         if(!isKeyEven(keyNMessage)) return "To nie jest szyf sylabiczny";
         if(!isKeyPerfectSyllabic(keyNMessage)) return "Brakuje samogłosek. Ten szyfr może być lepszy";
         return null;
