@@ -71,6 +71,14 @@ public class SyllabicService implements CipherService {
         return roughPassword;
     }
 
+    private String createSentenceFromLetters(List<Character> roughPassword) {
+        String readyPassword = new String();
+        for (char letter : roughPassword) {
+            readyPassword += letter;
+        }
+        return readyPassword;
+    }
+
     private Map<Integer, Character> prepareKeyToEncrypt(KeyNMessage keyNMessage) {
         Map<Integer, Character> standardizedKey = keyStandardization(keyNMessage);
         Map<Integer, Character> keyReadyToEncrypt = new HashMap<>();
@@ -116,15 +124,5 @@ public class SyllabicService implements CipherService {
             mappedMessage.put(letterPosition, letter);
         }
         return mappedMessage;
-    }
-
-
-
-    private String createSentenceFromLetters(List<Character> roughPassword) {
-        String readyPassword = new String();
-        for (char letter : roughPassword) {
-            readyPassword += letter;
-        }
-        return readyPassword;
     }
 }
